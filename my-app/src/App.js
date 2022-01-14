@@ -15,6 +15,7 @@ import {
   InputNumber,
   message,
   Typography,
+  Progress,
 } from 'antd'
 
 const { Header, Footer, Content } = Layout
@@ -35,6 +36,7 @@ function App() {
     {
       title: 'Priority',
       dataIndex: 'priority',
+      sorter: (a, b) => a.priority - b.priority,
     },
     {
       title: 'Comments',
@@ -46,6 +48,7 @@ function App() {
   const Aplication = () => {
     const [data, setData] = useState([])
     const selectionType = useState('checkbox')
+    const [form] = Form.useForm()
 
     const onChangeCheckState = (selectedKey) => {
       setData(
@@ -81,6 +84,8 @@ function App() {
           key: data.length,
         },
       ])
+      form.resetFields()
+
       // console.log('Success:', data)
       message.success('Submit success!')
     }
@@ -94,10 +99,18 @@ function App() {
     //   console.log('changed', value)
     // }
 
+    const progress = () => {
+      let checkedTask = data.filter(
+        (state) => state.stateCheckbox === true
+      ).length
+
+      return (checkedTask * 100) / data.length
+    }
+
     return (
       <div>
         <Divider />
-
+        <Progress percent={progress()} />
         <Table
           rowSelection={{
             type: selectionType,
@@ -107,6 +120,7 @@ function App() {
           dataSource={data}
           footer={() => (
             <Form
+              form={form}
               name="basic"
               initialValues={{
                 remember: true,
